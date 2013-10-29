@@ -135,6 +135,9 @@ class WeedFSClientImpl implements WeedFSClient {
 
     @Override
     public int write(WeedFSFile file, Location location, File fileToUpload) throws IOException, WeedFSException {
+        if (fileToUpload.length() == 0) {
+            throw new WeedFSException("Cannot write a 0-length file");
+        }
         StringBuilder url = new StringBuilder();
         if (!location.url.contains("http")) {
             url.append("http://");
