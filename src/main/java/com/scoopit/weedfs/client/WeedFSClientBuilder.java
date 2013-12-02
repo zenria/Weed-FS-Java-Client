@@ -25,11 +25,15 @@ import java.net.URL;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import com.scoopit.weedfs.client.caching.LookupCache;
+
 public class WeedFSClientBuilder {
 
     HttpClient httpClient;
 
     URL masterUrl;
+
+    LookupCache lookupCache;
 
     public WeedFSClientBuilder() {
 
@@ -49,6 +53,11 @@ public class WeedFSClientBuilder {
         return this;
     }
 
+    public WeedFSClientBuilder setLookupCache(LookupCache lookupCache) {
+        this.lookupCache = lookupCache;
+        return this;
+    }
+
     public WeedFSClient build() {
         if (masterUrl == null) {
             try {
@@ -65,7 +74,7 @@ public class WeedFSClientBuilder {
             httpClient = HttpClientBuilder.create().build();
         }
 
-        return new WeedFSClientImpl(masterUrl, httpClient);
+        return new WeedFSClientImpl(masterUrl, httpClient, lookupCache);
     }
 
 }
