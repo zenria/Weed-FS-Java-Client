@@ -36,6 +36,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.scoopit.weedfs.client.caching.LookupCache;
 import com.scoopit.weedfs.client.net.AssignResult;
 import com.scoopit.weedfs.client.net.LookupResult;
 import com.scoopit.weedfs.client.net.WriteResult;
@@ -44,10 +45,12 @@ class WeedFSClientImpl implements WeedFSClient {
 
     final URL masterURL;
     final HttpClient httpClient;
+    final LookupCache lookupCache;
 
-    WeedFSClientImpl(URL masterURL, HttpClient httpClient) {
+    WeedFSClientImpl(URL masterURL, HttpClient httpClient, LookupCache lookupCache) {
         this.masterURL = masterURL;
         this.httpClient = httpClient;
+        this.lookupCache = lookupCache;
     }
 
     @Override
@@ -107,6 +110,13 @@ class WeedFSClientImpl implements WeedFSClient {
 
     @Override
     public List<Location> lookup(long volumeId) throws IOException, WeedFSException {
+        if (lookupCache != null) {
+            List<Location> ret = lookupCache.lookup(volumeId);
+            if (ret != null) {
+                return ret;
+            }
+        }
+
         StringBuilder url = new StringBuilder(new URL(masterURL, "/dir/lookup").toExternalForm());
         url.append("?volumeId=");
         url.append(volumeId);
@@ -123,6 +133,10 @@ class WeedFSClientImpl implements WeedFSClient {
                     throw new WeedFSException(result.error);
                 }
 
+                if(lookupCache!=null){
+                    lookupCache.setLocation(volumeId, result.locations);
+                }
+                
                 return result.locations;
             } catch (JsonMappingException | JsonParseException e) {
                 throw new WeedFSException(e);
