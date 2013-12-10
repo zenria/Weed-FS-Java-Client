@@ -63,6 +63,11 @@ class WeedFSClientImpl implements WeedFSClient {
             url.append(params.replicationStrategy.parameterValue);
         }
 
+        if (params.collection != null) {
+            url.append("&collection=");
+            url.append(params.collection);
+        }
+
         HttpGet get = new HttpGet(url.toString());
         try {
             HttpResponse response = httpClient.execute(get);

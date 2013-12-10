@@ -25,21 +25,28 @@ public class AssignParams {
 
     final int versionCount;
 
+    final String collection;
+
     public static final AssignParams DEFAULT = new AssignParams();
 
     public AssignParams() {
-        this(1, null);
+        this(null, 1, null);
     }
 
     public AssignParams(int versionCount) {
-        this(versionCount, null);
+        this(null, versionCount, null);
     }
 
     public AssignParams(ReplicationStrategy replicationStrategy) {
-        this(1, replicationStrategy);
+        this(null, 1, replicationStrategy);
     }
 
-    public AssignParams(int versionCount, ReplicationStrategy replicationStrategy) {
+    public AssignParams(String collection, ReplicationStrategy replicationStrategy) {
+        this(collection, 1, replicationStrategy);
+    }
+
+    public AssignParams(String collection, int versionCount, ReplicationStrategy replicationStrategy) {
+        this.collection = collection;
         this.versionCount = versionCount;
         this.replicationStrategy = replicationStrategy;
     }
