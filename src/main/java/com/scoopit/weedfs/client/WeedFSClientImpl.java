@@ -92,10 +92,10 @@ class WeedFSClientImpl implements WeedFSClient {
     @Override
     public void delete(WeedFSFile file, Location location) throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
-        if (!location.url.contains("http")) {
+        if (!location.publicUrl.contains("http")) {
             url.append("http://");
         }
-        url.append(location.url);
+        url.append(location.publicUrl);
         url.append("/");
         url.append(file.fid);
 
@@ -105,7 +105,7 @@ class WeedFSClientImpl implements WeedFSClient {
 
             StatusLine line = response.getStatusLine();
             if (line.getStatusCode() < 200 || line.getStatusCode() > 299) {
-                throw new WeedFSException("Error deleting file " + file.fid + " on " + location.url + ": " + line.getStatusCode() + " "
+                throw new WeedFSException("Error deleting file " + file.fid + " on " + location.publicUrl + ": " + line.getStatusCode() + " "
                         + line.getReasonPhrase());
             }
         } finally {
@@ -158,10 +158,10 @@ class WeedFSClientImpl implements WeedFSClient {
             throw new WeedFSException("Cannot write a 0-length file");
         }
         StringBuilder url = new StringBuilder();
-        if (!location.url.contains("http")) {
+        if (!location.publicUrl.contains("http")) {
             url.append("http://");
         }
-        url.append(location.url);
+        url.append(location.publicUrl);
         url.append('/');
         url.append(file.fid);
 
@@ -195,10 +195,10 @@ class WeedFSClientImpl implements WeedFSClient {
     @Override
     public InputStream read(WeedFSFile file, Location location) throws IOException, WeedFSException, WeedFSFileNotFoundException {
         StringBuilder url = new StringBuilder();
-        if (!location.url.contains("http")) {
+        if (!location.publicUrl.contains("http")) {
             url.append("http://");
         }
-        url.append(location.url);
+        url.append(location.publicUrl);
         url.append('/');
         url.append(file.fid);
 
@@ -215,7 +215,7 @@ class WeedFSClientImpl implements WeedFSClient {
         }
         if (line.getStatusCode() != 200) {
             get.abort();
-            throw new WeedFSException("Error reading file " + file.fid + " on " + location.url + ": " + line.getStatusCode() + " "
+            throw new WeedFSException("Error reading file " + file.fid + " on " + location.publicUrl + ": " + line.getStatusCode() + " "
                     + line.getReasonPhrase());
         }
         return response.getEntity().getContent();
