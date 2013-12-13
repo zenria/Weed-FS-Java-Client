@@ -58,6 +58,10 @@ public interface WeedFSClient {
 
     int write(WeedFSFile weedFSFile, Location location, File file) throws IOException, WeedFSException;
 
+    int write(WeedFSFile file, Location location, byte[] dataToUpload) throws IOException, WeedFSException;
+
+    int write(WeedFSFile file, Location location,  InputStream inputToUpload) throws IOException, WeedFSException;
+
     void delete(WeedFSFile file, Location location) throws IOException, WeedFSException;
 
     List<Location> lookup(long volumeId) throws IOException, WeedFSException;

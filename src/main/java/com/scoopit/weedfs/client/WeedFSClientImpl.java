@@ -157,6 +157,23 @@ class WeedFSClientImpl implements WeedFSClient {
         if (fileToUpload.length() == 0) {
             throw new WeedFSException("Cannot write a 0-length file");
         }
+        return write(file, location, fileToUpload, null, null);
+    }
+
+    @Override
+    public int write(WeedFSFile file, Location location, byte[] dataToUpload) throws IOException, WeedFSException {
+        if (dataToUpload.length == 0) {
+            throw new WeedFSException("Cannot write a 0-length data");
+        }
+        return write(file, location, null, dataToUpload, null);
+    }
+
+    @Override
+    public int write(WeedFSFile file, Location location,  InputStream inputToUpload) throws IOException, WeedFSException {
+        return write(file, location, null, null, inputToUpload);
+    }
+
+    private int write(WeedFSFile file, Location location, File fileToUpload, byte[] dataToUpload, InputStream inputToUpload) throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
         if (!location.publicUrl.contains("http")) {
             url.append("http://");
@@ -172,7 +189,15 @@ class WeedFSClientImpl implements WeedFSClient {
 
         HttpPost post = new HttpPost(url.toString());
         
-        post.setEntity(MultipartEntityBuilder.create().addBinaryBody("file", fileToUpload).build());
+        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+        if (fileToUpload != null) {
+            multipartEntityBuilder.addBinaryBody("file", fileToUpload);
+        } else if (dataToUpload != null) {
+            multipartEntityBuilder.addBinaryBody("file", dataToUpload);
+        } else {
+            multipartEntityBuilder.addBinaryBody("file", inputToUpload);
+        }
+        post.setEntity(multipartEntityBuilder.build());
         try {
             HttpResponse response = httpClient.execute(post);
             ObjectMapper mapper = new ObjectMapper();
