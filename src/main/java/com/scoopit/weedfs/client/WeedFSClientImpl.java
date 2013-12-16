@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
@@ -157,23 +158,34 @@ class WeedFSClientImpl implements WeedFSClient {
         if (fileToUpload.length() == 0) {
             throw new WeedFSException("Cannot write a 0-length file");
         }
-        return write(file, location, fileToUpload, null, null);
+        return write(file, location, fileToUpload, null, null, null);
     }
 
     @Override
-    public int write(WeedFSFile file, Location location, byte[] dataToUpload) throws IOException, WeedFSException {
+    public int write(WeedFSFile file, Location location, byte[] dataToUpload, String fileName) throws IOException, WeedFSException {
         if (dataToUpload.length == 0) {
             throw new WeedFSException("Cannot write a 0-length data");
         }
-        return write(file, location, null, dataToUpload, null);
+        return write(file, location, null, dataToUpload, null, fileName);
     }
 
     @Override
-    public int write(WeedFSFile file, Location location,  InputStream inputToUpload) throws IOException, WeedFSException {
-        return write(file, location, null, null, inputToUpload);
+    public int write(WeedFSFile file, Location location, InputStream inputToUpload, String fileName) throws IOException, WeedFSException {
+        return write(file, location, null, null, inputToUpload, fileName);
     }
 
-    private int write(WeedFSFile file, Location location, File fileToUpload, byte[] dataToUpload, InputStream inputToUpload) throws IOException, WeedFSException {
+    private String sanitizeFileName(String fileName) {
+        if (StringUtils.isBlank(fileName)) {
+            return "file";
+        } else if (fileName.length() > 256) {
+            return fileName.substring(0, 255);
+        }
+        return fileName;
+
+    }
+
+    private int write(WeedFSFile file, Location location, File fileToUpload, byte[] dataToUpload, InputStream inputToUpload, String fileName)
+            throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
         if (!location.publicUrl.contains("http")) {
             url.append("http://");
@@ -191,11 +203,14 @@ class WeedFSClientImpl implements WeedFSClient {
         
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
         if (fileToUpload != null) {
-            multipartEntityBuilder.addBinaryBody("file", fileToUpload);
+            if (fileName == null) {
+                fileName = fileToUpload.getName();
+            }
+            multipartEntityBuilder.addBinaryBody(sanitizeFileName(fileName), fileToUpload);
         } else if (dataToUpload != null) {
-            multipartEntityBuilder.addBinaryBody("file", dataToUpload);
+            multipartEntityBuilder.addBinaryBody(sanitizeFileName(fileName), dataToUpload);
         } else {
-            multipartEntityBuilder.addBinaryBody("file", inputToUpload);
+            multipartEntityBuilder.addBinaryBody(sanitizeFileName(fileName), inputToUpload);
         }
         post.setEntity(multipartEntityBuilder.build());
         try {

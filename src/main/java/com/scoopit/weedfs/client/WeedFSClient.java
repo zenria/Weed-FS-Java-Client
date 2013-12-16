@@ -52,15 +52,16 @@ import java.util.List;
  * 
  * </pre>
  * 
+ * Note: fileName that exceeds 256 characters will be truncated.
  */
 public interface WeedFSClient {
     Assignation assign(AssignParams params) throws IOException, WeedFSException;
 
     int write(WeedFSFile weedFSFile, Location location, File file) throws IOException, WeedFSException;
 
-    int write(WeedFSFile file, Location location, byte[] dataToUpload) throws IOException, WeedFSException;
+    int write(WeedFSFile file, Location location, byte[] dataToUpload, String fileName) throws IOException, WeedFSException;
 
-    int write(WeedFSFile file, Location location,  InputStream inputToUpload) throws IOException, WeedFSException;
+    int write(WeedFSFile file, Location location, InputStream inputToUpload, String fileName) throws IOException, WeedFSException;
 
     void delete(WeedFSFile file, Location location) throws IOException, WeedFSException;
 
