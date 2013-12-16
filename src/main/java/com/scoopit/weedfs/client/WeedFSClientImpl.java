@@ -77,7 +77,7 @@ class WeedFSClientImpl implements WeedFSClient {
 
                 return new Assignation(result);
             } catch (JsonMappingException | JsonParseException e) {
-                throw new WeedFSException(e);
+                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
             }
         } finally {
             get.abort();
@@ -139,7 +139,7 @@ class WeedFSClientImpl implements WeedFSClient {
                 
                 return result.locations;
             } catch (JsonMappingException | JsonParseException e) {
-                throw new WeedFSException(e);
+                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
             }
         } finally {
             get.abort();
@@ -180,7 +180,7 @@ class WeedFSClientImpl implements WeedFSClient {
 
                 return result.size;
             } catch (JsonMappingException | JsonParseException e) {
-                throw new WeedFSException(e);
+                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
             }
         } finally {
             post.abort();
