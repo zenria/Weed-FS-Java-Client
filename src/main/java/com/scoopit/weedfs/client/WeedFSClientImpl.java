@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
@@ -63,6 +64,11 @@ class WeedFSClientImpl implements WeedFSClient {
             url.append(params.replicationStrategy.parameterValue);
         }
 
+        if (params.collection != null) {
+            url.append("&collection=");
+            url.append(params.collection);
+        }
+
         HttpGet get = new HttpGet(url.toString());
         try {
             HttpResponse response = httpClient.execute(get);
@@ -87,10 +93,10 @@ class WeedFSClientImpl implements WeedFSClient {
     @Override
     public void delete(WeedFSFile file, Location location) throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
-        if (!location.url.contains("http")) {
+        if (!location.publicUrl.contains("http")) {
             url.append("http://");
         }
-        url.append(location.url);
+        url.append(location.publicUrl);
         url.append("/");
         url.append(file.fid);
 
@@ -100,7 +106,7 @@ class WeedFSClientImpl implements WeedFSClient {
 
             StatusLine line = response.getStatusLine();
             if (line.getStatusCode() < 200 || line.getStatusCode() > 299) {
-                throw new WeedFSException("Error deleting file " + file.fid + " on " + location.url + ": " + line.getStatusCode() + " "
+                throw new WeedFSException("Error deleting file " + file.fid + " on " + location.publicUrl + ": " + line.getStatusCode() + " "
                         + line.getReasonPhrase());
             }
         } finally {
@@ -152,11 +158,39 @@ class WeedFSClientImpl implements WeedFSClient {
         if (fileToUpload.length() == 0) {
             throw new WeedFSException("Cannot write a 0-length file");
         }
+        return write(file, location, fileToUpload, null, null, null);
+    }
+
+    @Override
+    public int write(WeedFSFile file, Location location, byte[] dataToUpload, String fileName) throws IOException, WeedFSException {
+        if (dataToUpload.length == 0) {
+            throw new WeedFSException("Cannot write a 0-length data");
+        }
+        return write(file, location, null, dataToUpload, null, fileName);
+    }
+
+    @Override
+    public int write(WeedFSFile file, Location location, InputStream inputToUpload, String fileName) throws IOException, WeedFSException {
+        return write(file, location, null, null, inputToUpload, fileName);
+    }
+
+    private String sanitizeFileName(String fileName) {
+        if (StringUtils.isBlank(fileName)) {
+            return "file";
+        } else if (fileName.length() > 256) {
+            return fileName.substring(0, 255);
+        }
+        return fileName;
+
+    }
+
+    private int write(WeedFSFile file, Location location, File fileToUpload, byte[] dataToUpload, InputStream inputToUpload, String fileName)
+            throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
-        if (!location.url.contains("http")) {
+        if (!location.publicUrl.contains("http")) {
             url.append("http://");
         }
-        url.append(location.url);
+        url.append(location.publicUrl);
         url.append('/');
         url.append(file.fid);
 
@@ -167,7 +201,18 @@ class WeedFSClientImpl implements WeedFSClient {
 
         HttpPost post = new HttpPost(url.toString());
         
-        post.setEntity(MultipartEntityBuilder.create().addBinaryBody("file", fileToUpload).build());
+        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+        if (fileToUpload != null) {
+            if (fileName == null) {
+                fileName = fileToUpload.getName();
+            }
+            multipartEntityBuilder.addBinaryBody(sanitizeFileName(fileName), fileToUpload);
+        } else if (dataToUpload != null) {
+            multipartEntityBuilder.addBinaryBody(sanitizeFileName(fileName), dataToUpload);
+        } else {
+            multipartEntityBuilder.addBinaryBody(sanitizeFileName(fileName), inputToUpload);
+        }
+        post.setEntity(multipartEntityBuilder.build());
         try {
             HttpResponse response = httpClient.execute(post);
             ObjectMapper mapper = new ObjectMapper();
@@ -190,10 +235,10 @@ class WeedFSClientImpl implements WeedFSClient {
     @Override
     public InputStream read(WeedFSFile file, Location location) throws IOException, WeedFSException, WeedFSFileNotFoundException {
         StringBuilder url = new StringBuilder();
-        if (!location.url.contains("http")) {
+        if (!location.publicUrl.contains("http")) {
             url.append("http://");
         }
-        url.append(location.url);
+        url.append(location.publicUrl);
         url.append('/');
         url.append(file.fid);
 
@@ -210,7 +255,7 @@ class WeedFSClientImpl implements WeedFSClient {
         }
         if (line.getStatusCode() != 200) {
             get.abort();
-            throw new WeedFSException("Error reading file " + file.fid + " on " + location.url + ": " + line.getStatusCode() + " "
+            throw new WeedFSException("Error reading file " + file.fid + " on " + location.publicUrl + ": " + line.getStatusCode() + " "
                     + line.getReasonPhrase());
         }
         return response.getEntity().getContent();
