@@ -32,6 +32,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -206,13 +207,14 @@ class WeedFSClientImpl implements WeedFSClient {
             if (fileName == null) {
                 fileName = fileToUpload.getName();
             }
-            multipartEntityBuilder.addBinaryBody(sanitizeFileName(fileName), fileToUpload);
+            multipartEntityBuilder.addBinaryBody("file", fileToUpload, ContentType.APPLICATION_OCTET_STREAM, sanitizeFileName(fileName));
         } else if (dataToUpload != null) {
-            multipartEntityBuilder.addBinaryBody(sanitizeFileName(fileName), dataToUpload);
+            multipartEntityBuilder.addBinaryBody("file", dataToUpload, ContentType.APPLICATION_OCTET_STREAM, sanitizeFileName(fileName));
         } else {
-            multipartEntityBuilder.addBinaryBody(sanitizeFileName(fileName), inputToUpload);
+            multipartEntityBuilder.addBinaryBody("file", inputToUpload, ContentType.APPLICATION_OCTET_STREAM, sanitizeFileName(fileName));
         }
         post.setEntity(multipartEntityBuilder.build());
+
         try {
             HttpResponse response = httpClient.execute(post);
             ObjectMapper mapper = new ObjectMapper();
