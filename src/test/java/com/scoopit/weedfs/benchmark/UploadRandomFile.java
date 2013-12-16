@@ -1,6 +1,7 @@
 package com.scoopit.weedfs.benchmark;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.util.Random;
@@ -11,6 +12,7 @@ import akka.actor.UntypedActor;
 
 import com.scoopit.weedfs.client.AssignParams;
 import com.scoopit.weedfs.client.Assignation;
+import com.scoopit.weedfs.client.ReplicationStrategy;
 import com.scoopit.weedfs.client.WeedFSClient;
 import com.scoopit.weedfs.client.WeedFSClientBuilder;
 
@@ -47,9 +49,9 @@ public class UploadRandomFile extends UntypedActor {
         fos.close();
 
         WeedFSClient client = WeedFSClientBuilder.createBuilder().setMasterUrl(LoadTest.MASTER_URL).build();
-        Assignation a = client.assign(AssignParams.DEFAULT);
+        Assignation a = client.assign(new AssignParams("java-loadtest", ReplicationStrategy.None));
         // System.out.println(a.weedFSFile.fid + " assigned");
-        int writtenSize = client.write(a.weedFSFile, a.location, f);
+        int writtenSize = client.write(a.weedFSFile, a.location, new FileInputStream(f), "someName");
 
         if (writtenSize != size) {
             statsActor.tell(StatsCollector.Event.wrongUploadedSize, getSelf());
