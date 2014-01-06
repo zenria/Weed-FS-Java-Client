@@ -42,6 +42,8 @@ import com.scoopit.weedfs.client.caching.LookupCache;
 import com.scoopit.weedfs.client.net.AssignResult;
 import com.scoopit.weedfs.client.net.LookupResult;
 import com.scoopit.weedfs.client.net.WriteResult;
+import com.scoopit.weedfs.client.status.MasterStatus;
+import com.scoopit.weedfs.client.status.VolumeStatus;
 
 class WeedFSClientImpl implements WeedFSClient {
 
@@ -140,10 +142,10 @@ class WeedFSClientImpl implements WeedFSClient {
                     throw new WeedFSException(result.error);
                 }
 
-                if(lookupCache!=null){
+                if (lookupCache != null) {
                     lookupCache.setLocation(volumeId, result.locations);
                 }
-                
+
                 return result.locations;
             } catch (JsonMappingException | JsonParseException e) {
                 throw new WeedFSException("Unable to parse JSON from weed-fs", e);
@@ -201,7 +203,7 @@ class WeedFSClientImpl implements WeedFSClient {
         }
 
         HttpPost post = new HttpPost(url.toString());
-        
+
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
         if (fileToUpload != null) {
             if (fileName == null) {
@@ -263,4 +265,60 @@ class WeedFSClientImpl implements WeedFSClient {
         return response.getEntity().getContent();
     }
 
+    @Override
+    public MasterStatus getMasterStatus() throws IOException {
+        URL url = new URL(masterURL, "/dir/status");
+
+        HttpGet get = new HttpGet(url.toString());
+
+        try {
+            HttpResponse response = httpClient.execute(get);
+            StatusLine line = response.getStatusLine();
+
+            if (line.getStatusCode() != 200) {
+                throw new IOException("Not 200 status recieved for master status url: " + url.toExternalForm());
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                return mapper.readValue(response.getEntity().getContent(), MasterStatus.class);
+
+            } catch (JsonMappingException | JsonParseException e) {
+                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
+            }
+        } finally {
+            get.abort();
+        }
+    }
+
+    @Override
+    public VolumeStatus getVolumeStatus(Location location) throws IOException {
+        StringBuilder url = new StringBuilder();
+        if (!location.publicUrl.contains("http")) {
+            url.append("http://");
+        }
+        url.append(location.publicUrl);
+        url.append("/status");
+
+        HttpGet get = new HttpGet(url.toString());
+
+        try {
+            HttpResponse response = httpClient.execute(get);
+            StatusLine line = response.getStatusLine();
+
+            if (line.getStatusCode() != 200) {
+                throw new IOException("Not 200 status recieved for master status url: " + url.toString());
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                return mapper.readValue(response.getEntity().getContent(), VolumeStatus.class);
+
+            } catch (JsonMappingException | JsonParseException e) {
+                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
+            }
+        } finally {
+            get.abort();
+        }
+    }
 }

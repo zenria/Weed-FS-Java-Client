@@ -51,4 +51,24 @@ public enum ReplicationStrategy {
 
     final String parameterValue;
 
+    public static ReplicationStrategy fromParameterValue(String parameterValue) {
+        // yes this is ugly
+        switch (parameterValue) {
+            case "000":
+                return None;
+            case "001":
+                return OnceOnSameRack;
+            case "010":
+                return OnceOnDifferentRack;
+            case "100":
+                return OnceOnDifferentDC;
+            case "200":
+                return TwiceOnDifferentDC;
+            case "110":
+                return OnceOnDifferentRackAndOnceOnDifferentDC;
+            default:
+                throw new IllegalArgumentException("Unknown Replication Strategy: " + parameterValue);
+        }
+    }
+
 }

@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.scoopit.weedfs.client.status.MasterStatus;
+import com.scoopit.weedfs.client.status.VolumeStatus;
+
 public class WeedFSClientMock implements WeedFSClient {
 
     @Override
@@ -59,6 +62,16 @@ public class WeedFSClientMock implements WeedFSClient {
 
     @Override
     public InputStream read(WeedFSFile file, Location location) throws IOException, WeedFSException {
+        return null;
+    }
+
+    @Override
+    public MasterStatus getMasterStatus() {
+        return null;
+    }
+
+    @Override
+    public VolumeStatus getVolumeStatus(Location location) {
         return null;
     }
 

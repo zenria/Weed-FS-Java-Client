@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.scoopit.weedfs.client.status.MasterStatus;
+import com.scoopit.weedfs.client.status.VolumeStatus;
+
 /**
  * <pre>
  *                      ,
@@ -69,4 +72,7 @@ public interface WeedFSClient {
 
     InputStream read(WeedFSFile file, Location location) throws IOException, WeedFSException;
 
+    MasterStatus getMasterStatus() throws IOException;
+
+    VolumeStatus getVolumeStatus(Location location) throws IOException;
 }
