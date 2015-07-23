@@ -20,5 +20,7 @@
 package com.scoopit.weedfs.client.net;
 
 public class WriteResult extends Result {
+    //sangdn: quick fix to parse json reponse
+    public String name;
     public int size;
 }
