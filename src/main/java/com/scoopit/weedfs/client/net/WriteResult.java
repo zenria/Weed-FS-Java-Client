@@ -20,5 +20,6 @@
 package com.scoopit.weedfs.client.net;
 
 public class WriteResult extends Result {
+    public String name;
     public int size;
 }
