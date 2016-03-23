@@ -100,10 +100,10 @@ class WeedFSClientImpl implements WeedFSClient {
     @Override
     public void delete(WeedFSFile file, Location location) throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
-        if (!location.publicUrl.contains("http")) {
+        if (!location.url.contains("http")) {
             url.append("http://");
         }
-        url.append(location.publicUrl);
+        url.append(location.url);
         url.append("/");
         url.append(file.fid);
 
@@ -210,10 +210,10 @@ class WeedFSClientImpl implements WeedFSClient {
     private int write(WeedFSFile file, Location location, File fileToUpload, byte[] dataToUpload, InputStream inputToUpload, String fileName, String ttl)
             throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
-        if (!location.publicUrl.contains("http")) {
+        if (!location.url.contains("http")) {
             url.append("http://");
         }
-        url.append(location.publicUrl);
+        url.append(location.url);
         url.append('/');
         url.append(file.fid);
 
