@@ -1,5 +1,5 @@
 
 #!/bin/bash
-mouseLocalLibPath="/Users/Toshi/server/mouse/WEB-INF/lib/"
+localLibPath="/Users/Toshi/server/Weed-FS-Java-Client/target/"
 localRepositoryPath="/Volumes/share-2/m2/repository"
-mvn install:install-file -Dfile=${mouseLocalLibPath}weed-fs-client-1.0.4.jar -DgroupId=com.scoopit -DartifactId=weed-fs-client -Dversion=1.0.4 -Dpackaging=jar -DlocalRepositoryPath=${localRepositoryPath}
+mvn install:install-file -Dfile=${localLibPath}weed-fs-client-1.0.5.jar -DgroupId=com.scoopit -DartifactId=weed-fs-client -Dversion=1.0.5 -Dpackaging=jar 
