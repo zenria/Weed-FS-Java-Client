@@ -142,7 +142,7 @@ class WeedFSClientImpl implements WeedFSClient {
                     throw new WeedFSException(result.error);
                 }
 
-                if (lookupCache != null) {
+                if(lookupCache != null && result.locations != null && result.locations.size() > 0) {
                     lookupCache.setLocation(volumeId, result.locations);
                 }
 
