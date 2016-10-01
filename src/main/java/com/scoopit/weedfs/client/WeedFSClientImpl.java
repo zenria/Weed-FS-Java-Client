@@ -71,6 +71,10 @@ class WeedFSClientImpl implements WeedFSClient {
             url.append("&collection=");
             url.append(params.collection);
         }
+        if (params.ttl != null){
+            url.append("&ttl=");
+            url.append(params.ttl);
+        }
 
         HttpGet get = new HttpGet(url.toString());
         try {
@@ -96,10 +100,10 @@ class WeedFSClientImpl implements WeedFSClient {
     @Override
     public void delete(WeedFSFile file, Location location) throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
-        if (!location.publicUrl.contains("http")) {
+        if (!location.url.contains("http")) {
             url.append("http://");
         }
-        url.append(location.publicUrl);
+        url.append(location.url);
         url.append("/");
         url.append(file.fid);
 
@@ -158,23 +162,39 @@ class WeedFSClientImpl implements WeedFSClient {
 
     @Override
     public int write(WeedFSFile file, Location location, File fileToUpload) throws IOException, WeedFSException {
+        return write(file, location, fileToUpload, null);
+    }
+
+    @Override
+    public int write(WeedFSFile file, Location location, File fileToUpload, String ttl) throws IOException, WeedFSException {
         if (fileToUpload.length() == 0) {
             throw new WeedFSException("Cannot write a 0-length file");
         }
-        return write(file, location, fileToUpload, null, null, null);
+        return write(file, location, fileToUpload, null, null, null, ttl);
     }
+
 
     @Override
     public int write(WeedFSFile file, Location location, byte[] dataToUpload, String fileName) throws IOException, WeedFSException {
-        if (dataToUpload.length == 0) {
-            throw new WeedFSException("Cannot write a 0-length data");
-        }
-        return write(file, location, null, dataToUpload, null, fileName);
+        return write(file, location, dataToUpload, fileName, null);
     }
 
     @Override
+    public int write(WeedFSFile file, Location location, byte[] dataToUpload, String fileName, String ttl) throws IOException, WeedFSException {
+        if (dataToUpload.length == 0) {
+            throw new WeedFSException("Cannot write a 0-length data");
+        }
+        return write(file, location, null, dataToUpload, null, fileName, ttl);
+    }
+    
+    @Override
     public int write(WeedFSFile file, Location location, InputStream inputToUpload, String fileName) throws IOException, WeedFSException {
-        return write(file, location, null, null, inputToUpload, fileName);
+        return write(file, location, inputToUpload, fileName, null);
+    }
+
+    @Override
+    public int write(WeedFSFile file, Location location, InputStream inputToUpload, String fileName, String ttl) throws IOException, WeedFSException {
+        return write(file, location, null, null, inputToUpload, fileName, ttl);
     }
 
     private String sanitizeFileName(String fileName) {
@@ -187,19 +207,23 @@ class WeedFSClientImpl implements WeedFSClient {
 
     }
 
-    private int write(WeedFSFile file, Location location, File fileToUpload, byte[] dataToUpload, InputStream inputToUpload, String fileName)
+    private int write(WeedFSFile file, Location location, File fileToUpload, byte[] dataToUpload, InputStream inputToUpload, String fileName, String ttl)
             throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
-        if (!location.publicUrl.contains("http")) {
+        if (!location.url.contains("http")) {
             url.append("http://");
         }
-        url.append(location.publicUrl);
+        url.append(location.url);
         url.append('/');
         url.append(file.fid);
 
         if (file.version > 0) {
             url.append('_');
             url.append(file.version);
+        }
+        if(ttl != null){
+            url.append("?ttl=");
+            url.append(ttl);
         }
 
         HttpPost post = new HttpPost(url.toString());

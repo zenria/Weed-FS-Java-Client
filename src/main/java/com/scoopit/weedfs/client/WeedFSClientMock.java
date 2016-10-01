@@ -35,7 +35,18 @@ public class WeedFSClientMock implements WeedFSClient {
     }
 
     @Override
+    public int write(WeedFSFile weedFSFile, Location location, File file, String ttl) throws IOException, WeedFSException {
+        return 0;
+    }
+    
+    @Override
     public int write(WeedFSFile weedFSFile, Location location, File file) throws IOException, WeedFSException {
+        return 0;
+    }
+
+    @Override
+    public int write(WeedFSFile file, Location location, byte[] dataToUpload, String fileName, String ttl) throws IOException,
+            WeedFSException {
         return 0;
     }
 
@@ -45,6 +56,11 @@ public class WeedFSClientMock implements WeedFSClient {
         return 0;
     }
 
+    @Override
+    public int write(WeedFSFile file, Location location, InputStream inputToUpload, String fileName, String ttl)
+            throws IOException, WeedFSException {
+        return 0;
+    }
     @Override
     public int write(WeedFSFile file, Location location, InputStream inputToUpload, String fileName)
             throws IOException, WeedFSException {

@@ -27,28 +27,31 @@ public class AssignParams {
 
     final String collection;
 
+    final String ttl;
+    
     public static final AssignParams DEFAULT = new AssignParams();
 
     public AssignParams() {
-        this(null, 1, null);
+        this(null, 1, null, null);
     }
 
     public AssignParams(int versionCount) {
-        this(null, versionCount, null);
+        this(null, versionCount, null, null);
     }
 
     public AssignParams(ReplicationStrategy replicationStrategy) {
-        this(null, 1, replicationStrategy);
+        this(null, 1, replicationStrategy, null);
     }
 
     public AssignParams(String collection, ReplicationStrategy replicationStrategy) {
-        this(collection, 1, replicationStrategy);
+        this(collection, 1, replicationStrategy, null);
     }
 
-    public AssignParams(String collection, int versionCount, ReplicationStrategy replicationStrategy) {
+    public AssignParams(String collection, int versionCount, ReplicationStrategy replicationStrategy, String ttl) {
         this.collection = collection;
         this.versionCount = versionCount;
         this.replicationStrategy = replicationStrategy;
+        this.ttl = ttl;
     }
 
 }
