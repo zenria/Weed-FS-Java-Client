@@ -7,6 +7,7 @@ import com.scoopit.weedfs.client.ReplicationStrategy;
 public class Layout {
     public String collection;
     public String replication;
+    public String ttl;
     public List<Integer> writables;
 
     public ReplicationStrategy getReplicationStrategy() {
