@@ -24,7 +24,6 @@ import java.util.List;
 import com.scoopit.weedfs.client.Location;
 
 public class LookupResult extends Result {
-
+    public String volumeId;
     public List<Location> locations;
-
 }
