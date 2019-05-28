@@ -86,7 +86,7 @@ class WeedFSClientImpl implements WeedFSClient {
 
                 return new Assignation(result);
             } catch (JsonMappingException | JsonParseException e) {
-                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
+                throw new WeedFSException("Unable to parse AssignResult from weed-fs", e);
             }
         } finally {
             get.abort();
@@ -148,7 +148,7 @@ class WeedFSClientImpl implements WeedFSClient {
 
                 return result.locations;
             } catch (JsonMappingException | JsonParseException e) {
-                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
+                throw new WeedFSException("Unable to parse LookupResult from weed-fs" + e.getMessage(), e);
             }
         } finally {
             get.abort();
@@ -229,7 +229,7 @@ class WeedFSClientImpl implements WeedFSClient {
 
                 return result.size;
             } catch (JsonMappingException | JsonParseException e) {
-                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
+                throw new WeedFSException("Unable to parse WriteResult from weed-fs " + e.getMessage(), e);
             }
         } finally {
             post.abort();
@@ -284,7 +284,7 @@ class WeedFSClientImpl implements WeedFSClient {
                 return mapper.readValue(response.getEntity().getContent(), MasterStatus.class);
 
             } catch (JsonMappingException | JsonParseException e) {
-                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
+                throw new WeedFSException("Unable to parse MasterStatus from weed-fs " + e.getMessage(), e);
             }
         } finally {
             get.abort();
@@ -315,7 +315,7 @@ class WeedFSClientImpl implements WeedFSClient {
                 return mapper.readValue(response.getEntity().getContent(), VolumeStatus.class);
 
             } catch (JsonMappingException | JsonParseException e) {
-                throw new WeedFSException("Unable to parse JSON from weed-fs", e);
+                throw new WeedFSException("Unable to parse VolumeStatus from weed-f "+ e.getMessage(), e);
             }
         } finally {
             get.abort();
