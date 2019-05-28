@@ -21,10 +21,12 @@ package com.scoopit.weedfs.client.net;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.scoopit.weedfs.client.Location;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LookupResult extends Result {
-
+    public long volumeId;
     public List<Location> locations;
 
 }

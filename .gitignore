@@ -1,8 +1,10 @@
+
 # Created by http://gitignore.io
 
+.idea/
 ### Maven ###
 target/
-
+*.iml
 ### Java ###
 *.class
 

@@ -4,7 +4,7 @@
 
 	<groupId>com.scoopit</groupId>
 	<artifactId>weed-fs-client</artifactId>
-	<version>1.0.3</version>
+	<version>1.2.0</version>
 	<packaging>jar</packaging>
 
 	<name>weed-fs-client</name>
