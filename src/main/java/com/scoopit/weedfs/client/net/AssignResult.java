@@ -19,9 +19,11 @@
  */
 package com.scoopit.weedfs.client.net;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.scoopit.weedfs.client.Location;
 import com.scoopit.weedfs.client.WeedFSFile;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AssignResult extends Result {
     public int count;
     public String fid;

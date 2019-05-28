@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * Contributors:
  *     Philippe GASSMANN
  *     Jean-Baptiste BELLET
@@ -190,11 +190,10 @@ class WeedFSClientImpl implements WeedFSClient {
     private int write(WeedFSFile file, Location location, File fileToUpload, byte[] dataToUpload, InputStream inputToUpload, String fileName)
             throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
-        if (!location.url.contains("http")) {
+        if (!location.publicUrl.contains("http")) {
             url.append("http://");
         }
-//        url.append(location.url);
-        url.append("localhost:8080");
+        url.append(location.publicUrl);
         url.append('/');
         url.append(file.fid);
 

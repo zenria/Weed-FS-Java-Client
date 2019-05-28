@@ -19,6 +19,9 @@
  */
 package com.scoopit.weedfs.client.net;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Result {
     public String error;
 }

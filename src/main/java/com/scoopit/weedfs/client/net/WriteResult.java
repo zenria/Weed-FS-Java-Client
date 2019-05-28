@@ -19,6 +19,10 @@
  */
 package com.scoopit.weedfs.client.net;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WriteResult extends Result {
     public String eTag;
     public String name;
