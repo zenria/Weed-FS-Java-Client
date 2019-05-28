@@ -22,7 +22,7 @@ public class LoadTest {
     static final URL MASTER_URL;
     static {
         try {
-            MASTER_URL = new URL("http://homer:9333");
+            MASTER_URL = new URL("http://localhost:9333");
         } catch (MalformedURLException u) {
             throw new RuntimeException(u);
         }

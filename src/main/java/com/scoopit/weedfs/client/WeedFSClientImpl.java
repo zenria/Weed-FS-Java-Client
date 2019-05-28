@@ -190,10 +190,11 @@ class WeedFSClientImpl implements WeedFSClient {
     private int write(WeedFSFile file, Location location, File fileToUpload, byte[] dataToUpload, InputStream inputToUpload, String fileName)
             throws IOException, WeedFSException {
         StringBuilder url = new StringBuilder();
-        if (!location.publicUrl.contains("http")) {
+        if (!location.url.contains("http")) {
             url.append("http://");
         }
-        url.append(location.publicUrl);
+//        url.append(location.url);
+        url.append("localhost:8080");
         url.append('/');
         url.append(file.fid);
 
